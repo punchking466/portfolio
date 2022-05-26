@@ -1,0 +1,10 @@
+db.sqlite3
+__pycache__/
+.idea/
+.python-version
+test.py
+local_settings.py
+.DS_Store
+oracle_client
+*.csv
+run*
