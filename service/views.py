@@ -1,18 +1,22 @@
 from django.shortcuts import render
-from rest_framework.response import Response
-from rest_framework.decorators import api_view
 from service.models import *
 from .serializers import InformationSerializer
+from django.views import View
+from django.http import JsonResponse
+from django.db.models import *
 
-@api_view(['GET'])
 def getData(request):
-     information = Information.objects.all()
-     serializer = InformationSerializer(information, many=True)
-     return Response(serializer.data)
+     employee_id =request.GET.get('employee_id')
+     if not employee_id:
+          return JsonResponse({'error : 직원번호 값은 필수입니다.'})
 
-@api_view(['post'])
-def addPerson(request):
-     serializer = InformationSerializer(data=request.data)
-     if serializer.is_valid():
-          serializer.save()
-     return Response(serializer.data)
+     info = Information.objects.get(employee_id=employee_id)
+
+     remain_days = info.remain_dayd - int(request.GET.get('days'), 0)
+
+     print(info.name)
+     print(info.remain_dayd)
+
+     txt = f'{info.name}님의 연차는 {info.remain_dayd}이고  {request.GET["days"]}일 사용하여 잔여 연차는 {remain_days}일 입니다.'
+
+     return JsonResponse(data={'text': txt}, json_dumps_params={'ensure_ascii': False})
